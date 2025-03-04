@@ -40,5 +40,5 @@ start_site() {
   fi
 }
 
-# Ejecutar la función y pasarle el primer argumento
+# Execute the function and pass it the first argument
 start_site "$1"
