@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Author: antoniohg (https://github.com/antoniohg)
+# Description: Start to develop a site with npm run dev, open the project in Visual Studio Code, and open the site in the browser
+# Dependencies: npm, Visual Studio Code (code), and a browser (Google Chrome)
+# Usage: startsite [directory]
+#   directory: The project directory to open (default: .)
+
 start_site() {
   # Use the first argument as the project directory, or the current directory
   PROJECT_DIR=${1:-$(pwd)}
