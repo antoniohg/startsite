@@ -1,13 +1,13 @@
-# startsite.sh
+# Startsite Script
 
-This script simplifies the process of setting up and starting a local development environment for web projects.
+This script simplifies the process of open a local project environment for web development by automating common tasks.
 
 ## Overview
 
 `startsite.sh` automates the common tasks required when beginning work on a web development project, such as:
-- Opening the project in your preferred code editor
-- Starting a local development server
-- Opening the site in your preferred web browser
+- Opening the project in VS Code
+- Starting a local development server: `npm run dev`
+- Opening the site in the default browser: Chrome
 
 ## Usage
 
@@ -30,8 +30,8 @@ startsite.sh
 ## Features
 
 - One-command project initialization
-- Configurable for different project types
 - Saves time on repetitive startup procedures
+- Automatically find the opened server in your browser at `http://localhost:[port]` and open the URL in the browser
 - Easy to customize for personal preferences
 
 ## Configuration
