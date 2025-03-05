@@ -24,7 +24,7 @@ start_site() {
   # Open the project in Visual Studio Code (using full path instead of alias to avoid issues with the shell)
   open -a "Visual Studio Code" .
 
-  # Manage interruption with SIGINT (Command + C)
+  # Manage interruption with SIGINT (Ctrl + C)
   trap cleanup SIGINT
   cleanup() {
     echo "🛑 Deteniendo servidor..."
