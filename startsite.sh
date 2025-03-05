@@ -15,8 +15,8 @@ start_site() {
   # Change to the project directory
   cd "$PROJECT_DIR" || { echo "❌ No se pudo acceder a $PROJECT_DIR"; exit 1; }
 
-  # Open the project in Visual Studio Code
-  code .
+  # Open the project in Visual Studio Code (using full path instead of alias to avoid issues with the shell)
+  open -a "Visual Studio Code" .
 
   # Manage interruption with SIGINT (Command + C)
   trap cleanup SIGINT
