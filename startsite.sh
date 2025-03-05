@@ -18,26 +18,34 @@ start_site() {
   # Open the project in Visual Studio Code
   code .
 
-  # Start the server in the background and log the output with the original colors
-  FORCE_COLOR=1 npm run dev --color=always | tee /tmp/site.log || true &
+  # Manage interruption with SIGINT (Command + C)
+  trap cleanup SIGINT
+  cleanup() {
+    echo "🛑 Deteniendo servidor..."
+    kill "$SERVER_PID" 2>/dev/null
+    exit 0
+  }
+
+  echo "⏳ Starting the server..."
+
+  # Start the server in the background and log the output with the original colors (using tee to capture the logs), ignoring the EIO error when stopping the server
+
+  FORCE_COLOR=1 npm run dev --color=always | tee /tmp/server.log || true &
+  SERVER_PID=$!
 
   # Wait for the server to start
   echo "⏳ Waiting for the server to start..."
   sleep 2
 
-  # Extract the port number from the logs
-  PORT=$(grep -oE "http://localhost:[0-9]+" /tmp/site.log | head -n 1 | cut -d":" -f3)
-
+  PORT=$(grep -oE "http://localhost:[0-9]+" /tmp/server.log | head -n 1 | cut -d':' -f3)
   if [ -n "$PORT" ]; then
-    echo "✅ Server started at http://localhost:$PORT"
-    # Open the site in Chrome
+    echo "✅ Server started at http://localhost:$PORT/"
     open -b com.google.Chrome "http://localhost:$PORT/"
-    echo "🌐 Site opened in Chrome."
   else
     echo "⚠️ Could not find the port number in the logs"
-    echo "⏹️ Exiting..."
-    exit 1
   fi
+
+  wait "$SERVER_PID"
 }
 
 # Execute the function and pass it the first argument
