@@ -32,25 +32,49 @@ start_site() {
     exit 0
   }
 
-  echo "⏳ Starting the server..."
-
   # Start the server in the background and log the output with the original colors (using tee to capture the logs), ignoring the EIO error when stopping the server
+  start_server() {
+    echo "⏳ Starting the server..."
+    FORCE_COLOR=1 npm run dev --color=always | tee /tmp/server.log || true &
+    SERVER_PID=$!
+  }
 
-  FORCE_COLOR=1 npm run dev --color=always | tee /tmp/server.log || true &
-  SERVER_PID=$!
+  # Wait for the server to start and check the logs for the port number
+  wait_for_server() {
+    echo "⏳ Waiting for the server to start..."
+    while true; do
+      if grep -q "ready" /tmp/server.log; then
+        extract_port
+        if [ -n "$PORT" ]; then
+          echo "✅ Server started at http://localhost:$PORT/"
+          open_browser "http://localhost:$PORT/"
+          break
+        else
+          echo "⚠️ Could not find the port number in the logs, retrying..."
+        fi
+      fi
+      echo "⏳ Waiting..."
+      sleep 1
+    done
+  }
 
-  # Wait for the server to start
-  echo "⏳ Waiting for the server to start..."
-  sleep 2
+  # Extract the port number from the server logs
+  extract_port() {
+    PORT=$(grep -oE "http://localhost:[0-9]+" /tmp/server.log | head -n 1 | cut -d':' -f3)
+  }
 
-  PORT=$(grep -oE "http://localhost:[0-9]+" /tmp/server.log | head -n 1 | cut -d':' -f3)
-  if [ -n "$PORT" ]; then
-    echo "✅ Server started at http://localhost:$PORT/"
-    open -b com.google.Chrome "http://localhost:$PORT/"
-  else
-    echo "⚠️ Could not find the port number in the logs"
-  fi
+  # Open the browser to the specified URL
+  open_browser() {
+    URL=$1
+    echo "Opening browser to: $URL"
+    open -b com.google.Chrome "$URL"
+  }
 
+  # Start the server and wait for it to be ready
+  start_server
+  wait_for_server
+
+  # Wait for the server to finish (this will block until the server stops)
   wait "$SERVER_PID"
 }
 
